@@ -79,8 +79,6 @@ static int __init first_char_driver_init(void) /* Constructor */
 	    unregister_chrdev_region(first, 1);
 	    return -1;
 	  }
-	// Initialize a Semaphonre 
-	// sema_init(&virtual_devices.sem,1); // initialise with value of 1
 
 	return 0;
 }
