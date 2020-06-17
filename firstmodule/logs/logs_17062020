@@ -1,0 +1,8 @@
+[ 6829.831725] Nitee: First char dev unregistered
+[ 6834.848474] Nitee : first Char Driver registered
+[ 7100.764519] Nitee Driver: open()
+[ 7110.688454] Nitee Driver: write()
+[ 7110.688470] Nitee Driver: close()
+[ 7112.505944] Nitee Driver: open()
+[ 7113.636507] Nitee Driver: read()
+[ 7113.636528] Nitee Driver: close()

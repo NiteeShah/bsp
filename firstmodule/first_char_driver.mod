@@ -1,2 +1,2 @@
-/home/nitee/Module/first_char_driver.o
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.o
 

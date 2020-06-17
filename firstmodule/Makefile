@@ -1,5 +1,3 @@
-obj-m += ofd.o
-obj-m += myfirst.o
 obj-m += first_char_driver.o
 
 PWD := $(shell pwd) 
