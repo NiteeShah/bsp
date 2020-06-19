@@ -6,9 +6,9 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 
-#define DEVICE "/dev/myfirstnull"
-#define TIMER_START _IOW('a','a',int32_t*);
-#define TIMER_STOP _IOR('a','a',int32_t*);
+#define DEVICE "/dev/myfirstioctl"
+#define TIMER_START _IOW('a','1',int32_t*)
+#define TIMER_STOP _IOR('b','2',int32_t*)
 
 int main() {
 
@@ -29,7 +29,7 @@ int main() {
 		ioctl(fd,TIMER_START, sizeof(write_buf));
 		break;
 	case 'b':
-		read(fd, TIMER_STOP, sizeof(read_buf));
+		ioctl(fd, TIMER_STOP, sizeof(read_buf));
 		printf("timer stopped");
 		break;
 	default:

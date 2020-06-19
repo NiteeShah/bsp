@@ -16,9 +16,8 @@ static struct class *cl; // Global variable for the device class
 int ret; //hold return values of the functions 
 
 /*Define IOCTL code arguments  */
-#define TIMER_START _IOW('a','a',int32_t*)
-#define TIMER_STOP _IOR('a','a',int32_t*)
-int32_t val =0;
+#define TIMER_START _IOW('a','1',int32_t*)
+#define TIMER_STOP _IOR('b','2',int32_t*)
 
 /* Create a structure for reading and writing from and to User space */
 
@@ -52,18 +51,18 @@ static ssize_t my_write(struct file *f, const char __user *buf, size_t len, loff
 	return len;
 }
 
-static long my_ioctl(struct file *f, unsigned int cmd, unsigned int arg)
+static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 {
 	switch(cmd) {
 
 	case TIMER_START:
-		copy_from_user(&val,(int32_t*)arg,sizeof(val));
 		printk(KERN_ALERT "Nitee IOCTL timer started for 3 secs");
 		break;
 	case TIMER_STOP:
-		copy_to_user((int32_t*)arg,&val,sizeof(val));
 		printk(KERN_ALERT "Nitee IOCTL timer stopped");
 		break;
+	}
+	return 0;
 }
 
 static struct file_operations first_fops =
@@ -71,9 +70,9 @@ static struct file_operations first_fops =
 	.owner   	= THIS_MODULE,
 	.open    	= my_open,
 	.release 	= my_close,
+	.unlocked_ioctl = my_ioctl,
 	.read    	= my_read,
 	.write   	= my_write,
-	.unlocked_ioctl = my_ioctl,
 };
   
 static int __init first_char_driver_init(void) /* Constructor */
@@ -87,7 +86,7 @@ static int __init first_char_driver_init(void) /* Constructor */
 		unregister_chrdev_region(first, 1);
 		return -1;
 	}
-	if (device_create(cl, NULL, first, NULL, "myfirstnull") == NULL) {
+	if (device_create(cl, NULL, first, NULL, "myfirstioctl") == NULL) {
 		class_destroy(cl);
 		unregister_chrdev_region(first, 1);
 		return -1;

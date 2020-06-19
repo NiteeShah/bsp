@@ -1,0 +1,18 @@
+[55325.823298] Nitee : first Char Driver registered
+[55337.892928] Nitee Driver: open()
+[55340.340889] Nitee IOCTL timer started for 3 secs
+[55340.340900] Nitee Driver: close()
+[55513.671886] Nitee Driver: open()
+[55515.619367] Nitee IOCTL timer started for 3 secs
+[55515.619378] Nitee Driver: close()
+[55517.856605] Nitee Driver: open()
+[55520.076923] Nitee IOCTL timer stopped
+[55520.076938] Nitee Driver: close()
+[55709.498583] Nitee: First char dev unregistered
+[55729.307447] Nitee : first Char Driver registered
+[55749.367832] Nitee Driver: open()
+[55751.430041] Nitee IOCTL timer started for 3 secs
+[55751.430052] Nitee Driver: close()
+[55753.436393] Nitee Driver: open()
+[55755.058771] Nitee IOCTL timer stopped
+[55755.058785] Nitee Driver: close()
