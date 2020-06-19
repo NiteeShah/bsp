@@ -7,28 +7,30 @@
 #include <sys/ioctl.h>
 
 #define DEVICE "/dev/myfirstnull"
+#define TIMER_START _IOW('a','a',int32_t*);
+#define TIMER_STOP _IOR('a','a',int32_t*);
 
 int main() {
 
 	int i,fd;
+	int32_t val;
 	char ch, write_buf[100], read_buf[100];
 	fd = open(DEVICE, O_RDWR); // open for reading and writing 
 	if (fd== -1) {
 		printf("file does not exist");
 		exit(-1);
 	}
-	printf("r = read \nw = write \nenter command: ");
+	printf("a = timer_start \nb = timer_stop \nenter command: ");
 	scanf("%c", &ch);
 	
 	switch(ch) {	
-	case 'w':
-		printf("enter data: ");
-		scanf(" %[^\n]", write_buf);
-		write(fd,write_buf, sizeof(write_buf));
+	case 'a':
+		printf("timer starts for 3 secs ");
+		ioctl(fd,TIMER_START, sizeof(write_buf));
 		break;
-	case 'r':
-		read(fd, read_buf, sizeof(read_buf));
-		printf("device: %s\n", read_buf);
+	case 'b':
+		read(fd, TIMER_STOP, sizeof(read_buf));
+		printf("timer stopped");
 		break;
 	default:
 		printf("please enter correct value");

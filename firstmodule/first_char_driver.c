@@ -7,12 +7,18 @@
 #include <linux/device.h>
 #include <linux/cdev.h>
 #include <linux/semaphore.h>
-#include <linux/uaccess.h>
+#include <linux/uaccess.h> //copy_to/from_user()
+#include <linux/ioctl.h>
 
 static dev_t first; // Global variable for the first device number
 static struct cdev c_dev; // Global variable for the character device structure
 static struct class *cl; // Global variable for the device class
 int ret; //hold return values of the functions 
+
+/*Define IOCTL code arguments  */
+#define TIMER_START _IOW('a','a',int32_t*)
+#define TIMER_STOP _IOR('a','a',int32_t*)
+int32_t val =0;
 
 /* Create a structure for reading and writing from and to User space */
 
@@ -46,13 +52,28 @@ static ssize_t my_write(struct file *f, const char __user *buf, size_t len, loff
 	return len;
 }
 
+static long my_ioctl(struct file *f, unsigned int cmd, unsigned int arg)
+{
+	switch(cmd) {
+
+	case TIMER_START:
+		copy_from_user(&val,(int32_t*)arg,sizeof(val));
+		printk(KERN_ALERT "Nitee IOCTL timer started for 3 secs");
+		break;
+	case TIMER_STOP:
+		copy_to_user((int32_t*)arg,&val,sizeof(val));
+		printk(KERN_ALERT "Nitee IOCTL timer stopped");
+		break;
+}
+
 static struct file_operations first_fops =
 {
-	.owner   = THIS_MODULE,
-	.open    = my_open,
-	.release = my_close,
-	.read    = my_read,
-	.write   = my_write
+	.owner   	= THIS_MODULE,
+	.open    	= my_open,
+	.release 	= my_close,
+	.read    	= my_read,
+	.write   	= my_write,
+	.unlocked_ioctl = my_ioctl,
 };
   
 static int __init first_char_driver_init(void) /* Constructor */

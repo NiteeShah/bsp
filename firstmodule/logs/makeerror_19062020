@@ -1,0 +1,76 @@
+ make > makeerror_19062020
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c: In function ‘my_ioctl’:
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:60:23: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+   copy_from_user(&val,(int32_t*)arg,sizeof(val));
+                       ^
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:64:16: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+   copy_to_user((int32_t*)arg,&val,sizeof(val));
+                ^
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:76:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+  .unlocked_ioctl = my_ioctl,
+                    ^~~~~~~~
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:76:20: note: (near initialization for ‘first_fops.unlocked_ioctl’)
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:69:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+ static struct file_operations first_fops =
+ ^~~~~~
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:79:19: error: invalid storage class for function ‘first_char_driver_init’
+ static int __init first_char_driver_init(void) /* Constructor */
+                   ^~~~~~~~~~~~~~~~~~~~~~
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:108:20: error: invalid storage class for function ‘first_char_driver_exit’
+ static void __exit first_char_driver_exit(void) /* Destructor */
+                    ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:1:0:
+./include/linux/module.h:131:42: error: invalid storage class for function ‘__inittest’
+  static inline initcall_t __maybe_unused __inittest(void)  \
+                                          ^
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:117:1: note: in expansion of macro ‘module_init’
+ module_init(first_char_driver_init);
+ ^~~~~~~~~~~
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:117:1: warning: ‘alias’ attribute ignored [-Wattributes]
+In file included from /home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:1:0:
+./include/linux/module.h:137:42: error: invalid storage class for function ‘__exittest’
+  static inline exitcall_t __maybe_unused __exittest(void)  \
+                                          ^
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:118:1: note: in expansion of macro ‘module_exit’
+ module_exit(first_char_driver_exit);
+ ^~~~~~~~~~~
+./include/linux/module.h:137:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+  static inline exitcall_t __maybe_unused __exittest(void)  \
+  ^
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:118:1: note: in expansion of macro ‘module_exit’
+ module_exit(first_char_driver_exit);
+ ^~~~~~~~~~~
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:118:1: warning: ‘alias’ attribute ignored [-Wattributes]
+In file included from ./include/linux/module.h:18:0,
+                 from /home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:1:
+./include/linux/moduleparam.h:24:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+ static const char __UNIQUE_ID(name)[]       \
+ ^
+./include/linux/module.h:162:32: note: in expansion of macro ‘__MODULE_INFO’
+ #define MODULE_INFO(tag, info) __MODULE_INFO(tag, tag, info)
+                                ^~~~~~~~~~~~~
+./include/linux/module.h:216:34: note: in expansion of macro ‘MODULE_INFO’
+ #define MODULE_LICENSE(_license) MODULE_INFO(license, _license)
+                                  ^~~~~~~~~~~
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:120:1: note: in expansion of macro ‘MODULE_LICENSE’
+ MODULE_LICENSE("GPL");
+ ^~~~~~~~~~~~~~
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:122:1: error: expected declaration or statement at end of input
+ MODULE_DESCRIPTION("Our First Character Driver");
+ ^~~~~~~~~~~~~~~~~~
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:122:1: warning: no return statement in function returning non-void [-Wreturn-type]
+At top level:
+/home/nitee/Module/github/bsp/firstmodule/first_char_driver.c:55:13: warning: ‘my_ioctl’ defined but not used [-Wunused-function]
+ static long my_ioctl(struct file *f, unsigned int cmd, unsigned int arg)
+             ^~~~~~~~
+cc1: some warnings being treated as errors
+make[2]: *** [/home/nitee/Module/github/bsp/firstmodule/first_char_driver.o] Error 1
+make[1]: *** [_module_/home/nitee/Module/github/bsp/firstmodule] Error 2
+make: *** [all] Error 2
+make -C /lib/modules/5.3.0-28-generic/build M=/home/nitee/Module/github/bsp/firstmodule  modules 
+make[1]: Entering directory '/usr/src/linux-headers-5.3.0-28-generic'
+  CC [M]  /home/nitee/Module/github/bsp/firstmodule/first_char_driver.o
+scripts/Makefile.build:288: recipe for target '/home/nitee/Module/github/bsp/firstmodule/first_char_driver.o' failed
+Makefile:1655: recipe for target '_module_/home/nitee/Module/github/bsp/firstmodule' failed
+make[1]: Leaving directory '/usr/src/linux-headers-5.3.0-28-generic'
+Makefile:5: recipe for target 'all' failed
