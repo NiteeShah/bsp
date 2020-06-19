@@ -1,0 +1,3 @@
+1. The error occured due to inccorect ioctl function defination. The last argument should be long arg 
+2. Also the sequence No for _IOR and _IOW should be different 
+3. Dont forget to give a null return value for ioctl function of file_operation struct 
