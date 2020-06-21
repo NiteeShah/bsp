@@ -1,0 +1,12 @@
+nitee@nitee-Lenovo-IdeaPad-Yoga-13:~/Module/github/bsp/firstmodule$ sudo chmod 777 /dev/myfirstnull
+nitee@nitee-Lenovo-IdeaPad-Yoga-13:~/Module/github/bsp/firstmodule$ ./userapp 
+r = read 
+w = write 
+enter command: w
+enter data: Awesome day
+nitee@nitee-Lenovo-IdeaPad-Yoga-13:~/Module/github/bsp/firstmodule$ ./userapp 
+r = read 
+w = write 
+enter command: r
+device: Awesome day
+

@@ -1,0 +1,10 @@
+nitee@nitee-Lenovo-IdeaPad-Yoga-13:~/Module/github/bsp/firstmodule$ ./userapp 
+a = timer_start 
+b = timer_stop 
+enter command: a
+timer starts for 3 secs nitee@nitee-Lenovo-IdeaPad-Yoga-13:~/Module/github/bsp/firstmodule$ 
+nitee@nitee-Lenovo-IdeaPad-Yoga-13:~/Module/github/bsp/firstmodule$ ./userapp 
+a = timer_start 
+b = timer_stop 
+enter command: b
+timer stopped
