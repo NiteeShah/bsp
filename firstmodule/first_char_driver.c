@@ -9,6 +9,9 @@
 #include <linux/semaphore.h>
 #include <linux/uaccess.h> //copy_to/from_user()
 #include <linux/ioctl.h>
+#include <linux/delay.h>
+#include <linux/jiffies.h>
+#include <linux/timer.h>
 
 static dev_t first; // Global variable for the first device number
 static struct cdev c_dev; // Global variable for the character device structure
@@ -18,6 +21,21 @@ int ret; //hold return values of the functions
 /*Define IOCTL code arguments  */
 #define TIMER_START _IOW('a','1',int32_t*)
 #define TIMER_STOP _IOR('b','2',int32_t*)
+
+/* Define Timer macro */
+#define TIMEOUT 5000 //miliseconds
+
+/* Create a struct for timer_list */
+static struct timer_list my_timer;
+
+/* Timer Callback function*/
+
+void timer_callback(struct timer_list *timer)
+{
+
+	printk("Nitee: Inside timer callback function");
+}
+
 
 /* Create a structure for reading and writing from and to User space */
 
@@ -56,10 +74,13 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 	switch(cmd) {
 
 	case TIMER_START:
-		printk(KERN_ALERT "Nitee IOCTL timer started for 3 secs");
+		printk(KERN_ALERT "Nitee IOCTL timer started for 5 secs");
+		timer_setup(&my_timer,timer_callback,0); // setup timer to call the timer call back function
+		mod_timer(&my_timer, jiffies + msecs_to_jiffies(TIMEOUT)); // Timer started for 5 seconds 
 		break;
 	case TIMER_STOP:
 		printk(KERN_ALERT "Nitee IOCTL timer stopped");
+		del_timer(&my_timer);
 		break;
 	}
 	return 0;
@@ -86,7 +107,7 @@ static int __init first_char_driver_init(void) /* Constructor */
 		unregister_chrdev_region(first, 1);
 		return -1;
 	}
-	if (device_create(cl, NULL, first, NULL, "myfirstioctl") == NULL) {
+	if (device_create(cl, NULL, first, NULL, "myfirsttimer") == NULL) {
 		class_destroy(cl);
 		unregister_chrdev_region(first, 1);
 		return -1;

@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 
-#define DEVICE "/dev/myfirstioctl"
+#define DEVICE "/dev/myfirsttimer"
 #define TIMER_START _IOW('a','1',int32_t*)
 #define TIMER_STOP _IOR('b','2',int32_t*)
 
