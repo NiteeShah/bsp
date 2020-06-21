@@ -25,7 +25,7 @@ int main() {
 	
 	switch(ch) {	
 	case 'a':
-		printf("timer starts for 3 secs ");
+		printf("timer starts for 5 secs ");
 		ioctl(fd,TIMER_START, sizeof(write_buf));
 		break;
 	case 'b':

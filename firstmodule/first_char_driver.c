@@ -17,6 +17,7 @@ static dev_t first; // Global variable for the first device number
 static struct cdev c_dev; // Global variable for the character device structure
 static struct class *cl; // Global variable for the device class
 int ret; //hold return values of the functions 
+int retval; // the the retuen value of timer functions 
 
 /*Define IOCTL code arguments  */
 #define TIMER_START _IOW('a','1',int32_t*)
@@ -33,7 +34,7 @@ static struct timer_list my_timer;
 void timer_callback(struct timer_list *timer)
 {
 
-	printk("Nitee: Inside timer callback function");
+	printk("Nitee: Inside timer callback function (%ld).\n", jiffies);
 }
 
 
@@ -74,13 +75,18 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 	switch(cmd) {
 
 	case TIMER_START:
-		printk(KERN_ALERT "Nitee IOCTL timer started for 5 secs");
+		printk(KERN_ALERT "Nitee IOCTL timer started for 5 secs (%ld)",jiffies);
 		timer_setup(&my_timer,timer_callback,0); // setup timer to call the timer call back function
-		mod_timer(&my_timer, jiffies + msecs_to_jiffies(TIMEOUT)); // Timer started for 5 seconds 
+		printk(KERN_ALERT"Nitee set up timer to fire in (%ld)",jiffies);
+		retval = mod_timer(&my_timer, jiffies + msecs_to_jiffies(TIMEOUT)); // Timer started for 5 seconds 
+		if (retval)
+			printk(KERN_ALERT "Nitee timer firing failed");
+		printk(KERN_ALERT "Nitee timer expired after completing 5 secs");
 		break;
 	case TIMER_STOP:
 		printk(KERN_ALERT "Nitee IOCTL timer stopped");
 		del_timer(&my_timer);
+		printk(KERN_ALERT "Nitee timer stopped after (%ld)", jiffies);
 		break;
 	}
 	return 0;
