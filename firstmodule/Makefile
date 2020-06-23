@@ -1,4 +1,5 @@
 obj-m += first_char_driver.o
+obj-m += first_workqueue.o
 
 PWD := $(shell pwd) 
 all:

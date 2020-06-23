@@ -1,0 +1,3 @@
+[  714.849406] Nitee Work queue module init: my_init 24
+[  714.850793] Nitee Work queue module handler: work_handler, data is 34
+[  945.678857] Nitee Work queue module exit: my_exit 37
