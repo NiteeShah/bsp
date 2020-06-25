@@ -12,6 +12,8 @@
 #include <linux/delay.h>
 #include <linux/jiffies.h>
 #include <linux/timer.h>
+#include <linux/workqueue.h> /* for work queue */
+#include <linux/slab.h> /* for kmalloc() */
 
 static dev_t first; // Global variable for the first device number
 static struct cdev c_dev; // Global variable for the character device structure
@@ -22,6 +24,7 @@ int retval; // the the retuen value of timer functions
 /*Define IOCTL code arguments  */
 #define TIMER_START _IOW('a','1',int32_t*)
 #define TIMER_STOP _IOR('b','2',int32_t*)
+#define SCHEDULE _IOW('c','3',int32_t*)
 
 /* Define Timer macro */
 #define TIMEOUT 5000 //miliseconds
@@ -35,6 +38,25 @@ void timer_callback(struct timer_list *timer)
 {
 
 	printk("Nitee: Inside timer callback function (%ld).\n", jiffies);
+}
+
+/* Declare work and workqueue and  Define work function (the handler) */
+
+static struct workqueue_struct *wq;
+static void work_handler(struct work_struct *work);
+static DECLARE_DELAYED_WORK(my_work, work_handler);
+
+struct work_data {
+	struct work_struct my_work;
+	int the_data;
+};
+
+static void work_handler(struct work_struct *work)
+{
+	struct work_data * my_data = container_of(work,
+	struct work_data, my_work);
+	printk("Nitee Work queue module handler: %s, data is %d\n",__FUNCTION__, my_data->the_data);
+	kfree(my_data);
 }
 
 
@@ -88,6 +110,10 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 		del_timer(&my_timer);
 		printk(KERN_ALERT "Nitee timer stopped after (%ld)", jiffies);
 		break;
+	case SCHEDULE:
+		queue_delayed_work(wq, &my_work, msecs_to_jiffies(5));
+		printk(KERN_ALERT "Nitee Scheduled the workqueue to start after 5 secs");
+		break;
 	}
 	return 0;
 }
@@ -104,6 +130,14 @@ static struct file_operations first_fops =
   
 static int __init first_char_driver_init(void) /* Constructor */
 {
+	static struct work_data *my_data;
+	printk("Nitee Work queue module init: %s %d\n",__FUNCTION__, __LINE__);
+	wq = create_singlethread_workqueue("my_single_thread");
+	my_data = kmalloc(sizeof(struct work_data), GFP_KERNEL);
+	my_data->the_data = 34;
+	INIT_WORK(&my_data->my_work, work_handler);
+//	queue_delayed_work(wq, &my_work, msecs_to_jiffies(5));
+
 	printk(KERN_INFO "Nitee : first Char Driver registered");
 
 	if (alloc_chrdev_region(&first, 0, 3, "firstChar") < 0) {
@@ -128,11 +162,15 @@ static int __init first_char_driver_init(void) /* Constructor */
 		return -1;
 	}
 
+
 	return 0;
 }
  
 static void __exit first_char_driver_exit(void) /* Destructor */
 {
+	flush_workqueue(wq);
+        destroy_workqueue(wq);
+        printk("Nitee Work queue module exit: %s %d\n",__FUNCTION__, __LINE__);
 	cdev_del(&c_dev);
 	device_destroy(cl, first);
 	class_destroy(cl);
