@@ -17,6 +17,7 @@
 #include <linux/interrupt.h>
 #include <linux/init.h>
 #include <linux/proc_fs.h>
+#include <linux/spinlock.h>
 
 static dev_t first; // Global variable for the first device number
 static struct cdev c_dev; // Global variable for the character device structure
@@ -24,9 +25,9 @@ static struct class *cl; // Global variable for the device class
 int ret; //hold return values of the functions 
 int retval; // the the retuen value of timer functions 
 
-/* Mutex Variable Declaration*/
+/* Mutex and Spinlock Variable Declaration*/
 struct mutex my_mutex;
-
+static spinlock_t my_spinlock;
 
 /*Define IOCTL code arguments  */
 #define TIMER_START _IOW('a','1',int32_t*)
@@ -44,7 +45,11 @@ static struct timer_list my_timer;
 void timer_callback(struct timer_list *timer)
 {
 
+	printk("Nitee : started the spinlock inside timer callback");
+	spin_lock(&my_spinlock);
 	printk("Nitee: Inside timer callback function (%ld).\n", jiffies);
+	spin_unlock(&my_spinlock);
+	printk("Nitee: spinlock released from timer callback (%ld) \n)", jiffies);
 }
 
 /* Declare work and workqueue and  Define work function (the handler) */
@@ -112,7 +117,7 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 		retval = mod_timer(&my_timer, jiffies + msecs_to_jiffies(TIMEOUT)); // Timer started for 5 seconds 
 		if (retval)
 			printk(KERN_ALERT "Nitee timer firing failed");
-		printk(KERN_ALERT "Nitee timer expired after completing 5 secs");
+		printk(KERN_ALERT "Nitee timer started in a separate thread, breaking from the switch case now");
 		break;
 	case TIMER_STOP:
 		printk(KERN_ALERT "Nitee IOCTL timer stopped");
@@ -149,6 +154,8 @@ static int __init first_char_driver_init(void) /* Constructor */
 
 	/* initialize mutex */
 	mutex_init(&my_mutex);
+	/* initailise spinlock*/
+	spin_lock_init(&my_spinlock);
 	printk(KERN_INFO "Nitee : first Char Driver registered");
 
 	if (alloc_chrdev_region(&first, 0, 3, "firstChar") < 0) {

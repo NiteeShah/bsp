@@ -1,0 +1,11 @@
+[  150.385116] Nitee Work queue module init: first_char_driver_init 149
+[  150.385187] Nitee : first Char Driver registered
+[  171.130322] Nitee Driver: open()
+[  173.094000] Nitee IOCTL timer started for 5 secs (4294935584)
+[  173.094003] Nitee set up timer to fire in (4294935584)
+[  173.094013] Nitee timer started in a separate thread, breaking from the switch case now
+[  173.094023] Nitee Driver: close()
+[  178.327577] Nitee : started the spinlock inside timer callback
+[  178.327582] Nitee: Inside timer callback function (4294936896).
+[  178.327586] Nitee: spinlock released from timer callback (4294936896 
+[  237.555728] Nitee Work queue module exit: first_char_driver_exit 192
