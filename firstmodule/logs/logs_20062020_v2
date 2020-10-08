@@ -1,0 +1,11 @@
+[ 2371.132454] Nitee : first Char Driver registered
+[ 2384.114337] Nitee Driver: open()
+[ 2385.545715] Nitee IOCTL timer started for 5 secs (4295488597)
+[ 2385.545716] Nitee set up timer to fire in (4295488597)
+[ 2385.545721] Nitee timer expired after completing 5 secs
+[ 2385.545725] Nitee Driver: close()
+[ 2390.579303] Nitee: Inside timer callback function (4295489856).
+[ 2399.730289] Nitee Driver: open()
+[ 2401.002174] Nitee IOCTL timer stopped
+[ 2401.002180] Nitee timer stopped after (4295492461)
+[ 2401.002212] Nitee Driver: close()

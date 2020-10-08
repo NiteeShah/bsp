@@ -1,0 +1,32 @@
+[ 4983.531638] Nitee Work queue module init: first_char_driver_init 144
+[ 4983.532853] Nitee : first Char Driver registered
+[ 5012.925252] Nitee Driver: open()
+[ 5016.108715] Nitee Scheduled the workqueue to start after 5 secs (4296146296)
+[ 5016.108721] Nitee workqueue completed 5 secs (4296146296)
+[ 5016.108742] Nitee Driver: close()
+[ 5021.259172] Nitee : Locking the work with mutex
+[ 5021.259179] Nitee Inside Work queue module handler (4296147584)
+[ 5021.259182] Nitee unclocking the acquired mutex
+[ 5088.992228] Nitee Work queue module exit: first_char_driver_exit 185
+[ 5088.992322] Nitee: First char dev unregistered
+[ 5264.576930] Nitee Work queue module init: first_char_driver_init 144
+[ 5264.577331] Nitee : first Char Driver registered
+[ 5280.313315] Nitee Driver: open()
+[ 5281.529812] Nitee Scheduled the workqueue to start after 5 secs (4296212654)
+[ 5281.529818] Nitee workqueue completed 5 secs (4296212654)
+[ 5281.529839] Nitee Driver: close()
+[ 5286.719276] Nitee : Locking the work with mutex
+[ 5286.719285] Nitee Inside Work queue module handler (4296213952)
+[ 5286.719289] Nitee unclocking the acquired mutex
+[ 5723.476949] Nitee Work queue module exit: first_char_driver_exit 185
+[ 5723.477095] Nitee: First char dev unregistered
+[ 5740.349376] Nitee Work queue module init: first_char_driver_init 144
+[ 5740.350083] Nitee : first Char Driver registered
+[ 5787.093804] Nitee Driver: open()
+[ 5788.521358] Nitee Scheduled the workqueue to start after 5 secs (4296339406)
+[ 5788.521365] Nitee workqueue started a separate thread, breaking from switch case now (4296339406)
+[ 5788.521392] Nitee Driver: close()
+[ 5793.583101] Nitee : Locking the work with mutex
+[ 5793.583107] Nitee Inside Work queue module handler (4296340672)
+[ 5793.583110] Nitee unlocking the acquired mutex
+[ 5809.925754] Nitee Work queue module exit: first_char_driver_exit 185

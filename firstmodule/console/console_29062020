@@ -1,0 +1,6 @@
+nitee@nitee-Lenovo-IdeaPad-Yoga-13:~/Module/github/bsp/firstmodule$ ./userapp 
+a = timer_start 
+b = timer_stop 
+c = schedule a workqueue 
+enter command: c
+Schedule a work queue

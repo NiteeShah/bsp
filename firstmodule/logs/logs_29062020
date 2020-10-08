@@ -1,0 +1,8 @@
+[10119.865560] Nitee Work queue module init: first_char_driver_init 136
+[10119.865652] Nitee : first Char Driver registered
+[10159.358206] Nitee Driver: open()
+[10160.928640] Nitee Scheduled the workqueue to start after 5 secs (4297432495)
+[10160.928646] Nitee workqueue completed 5 secs (4297432495)
+[10160.928667] Nitee Driver: close()
+[10166.114495] Nitee Inside Work queue module handler (4297433792)
+[10715.064974] Nitee Work queue module exit: first_char_driver_exit 174

@@ -14,12 +14,20 @@
 #include <linux/timer.h>
 #include <linux/workqueue.h> /* for work queue */
 #include <linux/slab.h> /* for kmalloc() */
+#include <linux/interrupt.h>
+#include <linux/init.h>
+#include <linux/proc_fs.h>
+#include <linux/spinlock.h>
 
 static dev_t first; // Global variable for the first device number
 static struct cdev c_dev; // Global variable for the character device structure
 static struct class *cl; // Global variable for the device class
 int ret; //hold return values of the functions 
 int retval; // the the retuen value of timer functions 
+
+/* Mutex and Spinlock Variable Declaration*/
+struct mutex my_mutex;
+static spinlock_t my_spinlock;
 
 /*Define IOCTL code arguments  */
 #define TIMER_START _IOW('a','1',int32_t*)
@@ -37,12 +45,17 @@ static struct timer_list my_timer;
 void timer_callback(struct timer_list *timer)
 {
 
+	printk("Nitee : started the spinlock inside timer callback");
+	spin_lock(&my_spinlock);
 	printk("Nitee: Inside timer callback function (%ld).\n", jiffies);
+	spin_unlock(&my_spinlock);
+	printk("Nitee: spinlock released from timer callback (%ld) \n)", jiffies);
 }
 
 /* Declare work and workqueue and  Define work function (the handler) */
 
 static struct workqueue_struct *wq;
+static struct delayed_work my_delay;
 static void work_handler(struct work_struct *work);
 static DECLARE_DELAYED_WORK(my_work, work_handler);
 
@@ -53,10 +66,11 @@ struct work_data {
 
 static void work_handler(struct work_struct *work)
 {
-	struct work_data * my_data = container_of(work,
-	struct work_data, my_work);
-	printk("Nitee Work queue module handler: %s, data is %d\n",__FUNCTION__, my_data->the_data);
-	kfree(my_data);
+	printk("Nitee : Locking the work with mutex");
+	mutex_lock(&my_mutex);
+	printk("Nitee Inside Work queue module handler (%ld)\n", jiffies);
+	mutex_unlock(&my_mutex);
+	printk("Nitee unlocking the acquired mutex");
 }
 
 
@@ -103,7 +117,7 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 		retval = mod_timer(&my_timer, jiffies + msecs_to_jiffies(TIMEOUT)); // Timer started for 5 seconds 
 		if (retval)
 			printk(KERN_ALERT "Nitee timer firing failed");
-		printk(KERN_ALERT "Nitee timer expired after completing 5 secs");
+		printk(KERN_ALERT "Nitee timer started in a separate thread, breaking from the switch case now");
 		break;
 	case TIMER_STOP:
 		printk(KERN_ALERT "Nitee IOCTL timer stopped");
@@ -111,7 +125,9 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 		printk(KERN_ALERT "Nitee timer stopped after (%ld)", jiffies);
 		break;
 	case SCHEDULE:
-		printk(KERN_ALERT "Nitee Scheduled the workqueue to start after 5 secs");
+		printk(KERN_ALERT "Nitee Scheduled the workqueue to start after 5 secs (%ld)",jiffies);
+		queue_delayed_work(wq, &my_delay, msecs_to_jiffies(5000));
+		printk(KERN_ALERT "Nitee workqueue started a separate thread, breaking from switch case now (%ld)",jiffies);
 		break;
 	}
 	return 0;
@@ -134,8 +150,12 @@ static int __init first_char_driver_init(void) /* Constructor */
 	wq = create_singlethread_workqueue("my_single_thread");
 	my_data = kmalloc(sizeof(struct work_data), GFP_KERNEL);
 	my_data->the_data = 34;
-	INIT_WORK(&my_data->my_work, work_handler);
-	queue_work(wq, &my_data->my_work);
+	INIT_DELAYED_WORK(&my_delay, work_handler);
+
+	/* initialize mutex */
+	mutex_init(&my_mutex);
+	/* initailise spinlock*/
+	spin_lock_init(&my_spinlock);
 	printk(KERN_INFO "Nitee : first Char Driver registered");
 
 	if (alloc_chrdev_region(&first, 0, 3, "firstChar") < 0) {
@@ -160,12 +180,13 @@ static int __init first_char_driver_init(void) /* Constructor */
 		return -1;
 	}
 
-
 	return 0;
 }
  
 static void __exit first_char_driver_exit(void) /* Destructor */
 {
+	int ret;
+	ret = cancel_delayed_work(&my_delay);
 	flush_workqueue(wq);
         destroy_workqueue(wq);
         printk("Nitee Work queue module exit: %s %d\n",__FUNCTION__, __LINE__);

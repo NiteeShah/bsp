@@ -14,6 +14,9 @@
 #include <linux/timer.h>
 #include <linux/workqueue.h> /* for work queue */
 #include <linux/slab.h> /* for kmalloc() */
+#include <linux/interrupt.h>
+#include <linux/init.h>
+#include <linux/proc_fs.h>
 
 static dev_t first; // Global variable for the first device number
 static struct cdev c_dev; // Global variable for the character device structure
@@ -43,6 +46,7 @@ void timer_callback(struct timer_list *timer)
 /* Declare work and workqueue and  Define work function (the handler) */
 
 static struct workqueue_struct *wq;
+static struct delayed_work my_delay;
 static void work_handler(struct work_struct *work);
 static DECLARE_DELAYED_WORK(my_work, work_handler);
 
@@ -53,10 +57,7 @@ struct work_data {
 
 static void work_handler(struct work_struct *work)
 {
-	struct work_data * my_data = container_of(work,
-	struct work_data, my_work);
-	printk("Nitee Work queue module handler: %s, data is %d\n",__FUNCTION__, my_data->the_data);
-	kfree(my_data);
+	printk("Nitee Inside Work queue module handler (%ld)\n", jiffies);
 }
 
 
@@ -111,7 +112,9 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 		printk(KERN_ALERT "Nitee timer stopped after (%ld)", jiffies);
 		break;
 	case SCHEDULE:
-		printk(KERN_ALERT "Nitee Scheduled the workqueue to start after 5 secs");
+		printk(KERN_ALERT "Nitee Scheduled the workqueue to start after 5 secs (%ld)",jiffies);
+		queue_delayed_work(wq, &my_delay, msecs_to_jiffies(5000));
+		printk(KERN_ALERT "Nitee workqueue completed 5 secs (%ld)",jiffies);
 		break;
 	}
 	return 0;
@@ -134,8 +137,7 @@ static int __init first_char_driver_init(void) /* Constructor */
 	wq = create_singlethread_workqueue("my_single_thread");
 	my_data = kmalloc(sizeof(struct work_data), GFP_KERNEL);
 	my_data->the_data = 34;
-	INIT_WORK(&my_data->my_work, work_handler);
-	queue_work(wq, &my_data->my_work);
+	INIT_DELAYED_WORK(&my_delay, work_handler);
 	printk(KERN_INFO "Nitee : first Char Driver registered");
 
 	if (alloc_chrdev_region(&first, 0, 3, "firstChar") < 0) {
@@ -160,12 +162,13 @@ static int __init first_char_driver_init(void) /* Constructor */
 		return -1;
 	}
 
-
 	return 0;
 }
  
 static void __exit first_char_driver_exit(void) /* Destructor */
 {
+	int ret;
+	ret = cancel_delayed_work(&my_delay);
 	flush_workqueue(wq);
         destroy_workqueue(wq);
         printk("Nitee Work queue module exit: %s %d\n",__FUNCTION__, __LINE__);
